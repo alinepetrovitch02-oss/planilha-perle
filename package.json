@@ -1,0 +1,6 @@
+{
+  "name": "painel-oficial-horas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Painel de consulta somente leitura da planilha oficial"
+}

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101116">
+<title>Consulta Oficial | MEUS MINUTOS</title>
+<style>
+:root{color-scheme:dark;--bg:#101116;--panel:#17191f;--card:#242731;--line:#3b3e49;--muted:#b7bac3;--gold:#d8ac43;--green:#77d9a0;--blue:#82c6ff;--yellow:#f5d477;--red:#ff929a}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:var(--bg);color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+main{max-width:520px;margin:auto;background:var(--panel);border-radius:22px;padding:14px;box-shadow:0 10px 30px #0005;min-height:calc(100vh - 32px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 2px 14px}
+.brand{min-width:0}
+h1{font-size:20px;margin:0;letter-spacing:-.35px}
+.kicker{font-size:10px;color:#b7bac3;margin-top:4px;letter-spacing:.4px}
+.period{font-size:10px;font-weight:800;color:#f5d477;background:#493817;padding:7px 9px;border-radius:9px;white-space:nowrap}
+.search{background:#242731;border:1px solid var(--line);border-radius:13px;padding:10px;margin-bottom:10px}
+label{display:block;font-size:11px;font-weight:700;color:#d5d7dd;margin:0 0 6px}
+.controls{display:flex;gap:6px}
+input{flex:1;min-width:0;border:1px solid #555a68;border-radius:9px;background:#11131a;color:#fff;padding:10px;font-size:16px!important;outline:none;-webkit-text-size-adjust:100%}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 2px #d8ac4330}
+button{border:0;border-radius:9px;background:var(--gold);color:#211a0b;font-weight:800;padding:0 13px;font-size:12px;min-height:39px;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+.status{font-size:11px;color:var(--muted);line-height:1.4;min-height:16px;margin:7px 2px 0}
+.status.error{color:var(--red)}
+.results{display:none;margin-top:10px}
+.result-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 2px 8px}
+.result-top strong{font-size:13px}
+.result-email{font-size:10px;color:var(--muted);overflow-wrap:anywhere;margin-top:2px}
+.source-state{font-size:9px;color:var(--green);white-space:nowrap}
+.account-state{display:flex;align-items:center;gap:7px;margin:0 2px 9px;padding:10px 11px;background:#242731;border:1px solid var(--line);border-radius:11px;font-size:12px}
+.account-state strong{margin-left:auto}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 9px}
+.dot.active{background:var(--green);box-shadow:0 0 8px #77d9a080}
+.dot.inactive{background:var(--red);box-shadow:0 0 8px #ff929a70}
+.dot.unknown{background:#a5a8b2}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.card{border-radius:14px;padding:12px;min-width:0;min-height:98px}
+.green{background:#153d2c;color:var(--green)}
+.blue{background:#183653;color:var(--blue)}
+.yellow{background:#493817;color:var(--yellow)}
+.red{background:#481f25;color:var(--red)}
+.label{font-size:12px;font-weight:700}
+.big{font-size:25px;font-weight:800;margin:7px 0 2px;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.minutes{font-size:9px;line-height:1.2;opacity:.68;margin:0 0 3px;font-variant-numeric:tabular-nums}.sub{font-size:10px;line-height:1.45;opacity:.82}
+.rank{grid-column:1/-1;background:#222b3b;border:1px solid #43516a;color:#fff;min-height:88px}
+.rank .label{color:#dce6f5}
+.rank .big{color:var(--gold);font-size:29px}
+.rank .sub{color:#c4ccda}
+footer{text-align:center;color:#92949c;font-size:9px;line-height:1.5;margin:13px 4px 2px}.footer-summary{margin:0 2px 8px;color:#aeb1ba;font-size:9px;line-height:1.45}.footer-summary strong{display:block;color:#c4c6cd;font-size:10px;font-weight:700;margin-bottom:2px}
+@media(max-width:380px){body{padding:10px}main{padding:11px}.big{font-size:22px}.card{padding:10px}.period{font-size:9px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="brand"><h1>MEUS MINUTOS</h1><div class="kicker">CONSULTA OFICIAL DE HORAS</div></div>
+  <span class="period">DADOS ATUAIS</span>
+</header>
+<section class="search">
+  <form id="form">
+    <label for="email">E-mail cadastrado</label>
+    <div class="controls">
+      <input id="email" type="email" autocomplete="email" placeholder="Digite seu e-mail" required>
+      <button id="submit" type="submit">Consultar</button>
+    </div>
+  </form>
+  <p id="status" class="status" role="status" aria-live="polite"></p>
+</section>
+<section id="results" class="results" aria-live="polite">
+  <div class="result-top">
+    <div><strong>Resultado da consulta</strong><div id="resultEmail" class="result-email"></div></div>
+    <span class="source-state">● Fonte conectada</span>
+  </div>
+  <section class="account-state" aria-live="polite">
+    <span id="accountDot" class="dot unknown"></span>
+    <span>Situação da conta</span>
+    <strong id="accountStatus">Indisponível</strong>
+  </section>
+  <section class="grid">
+    <article class="card blue"><div class="label">TOTAL HRS</div><div id="totalHours" class="big">—</div><div id="totalMinutes" class="minutes">— min</div><div class="sub">Total registrado na planilha oficial</div></article>
+    <article class="card green"><div class="label">ACEITO</div><div id="approved" class="big">—</div><div id="approvedMinutes" class="minutes">— min</div><div class="sub">Aceitas pela revisão</div></article>
+    <article class="card yellow"><div class="label">PENDENTE</div><div id="pending" class="big">—</div><div id="pendingMinutes" class="minutes">— min</div><div class="sub">Aguardando revisão</div></article>
+    <article class="card red"><div class="label">REJEITADO</div><div id="rejected" class="big">—</div><div id="rejectedMinutes" class="minutes">— min</div><div class="sub">Não aprovadas</div></article>
+    <article class="card rank"><div class="label">Posição no ranking geral</div><div id="rank" class="big">—</div><div id="rankTotal" class="sub">Posição original na planilha oficial</div></article>
+  </section>
+</section>
+<footer>
+  <div class="footer-summary"><strong>Resumo da planilha oficial</strong><span>Consulte os dados atuais da planilha oficial da empresa. Esta consulta é independente do painel principal.</span></div>
+  Consulta somente leitura · Nenhum valor financeiro é exibido · Os dados dependem da disponibilidade da planilha oficial.
+</footer>
+</main>
+<script>
+const form=document.getElementById("form"),emailInput=document.getElementById("email"),submitButton=document.getElementById("submit"),statusEl=document.getElementById("status"),results=document.getElementById("results");
+function status(message,error=false){statusEl.textContent=message;statusEl.className="status"+(error?" error":"")}
+async function lookup(email){
+  submitButton.disabled=true;status("Consultando a planilha oficial…");
+  try{
+    const response=await fetch("/api/consulta?nocache="+Date.now(),{method:"POST",headers:{"Content-Type":"application/json","Cache-Control":"no-cache"},cache:"no-store",body:JSON.stringify({email})});
+    const data=await response.json();if(!response.ok)throw new Error(data.error||"Não foi possível realizar a consulta.");
+    document.getElementById("resultEmail").textContent=data.email;
+    document.getElementById("approved").textContent=data.approved??"Indisponível";
+    document.getElementById("pending").textContent=data.pending??"Indisponível";
+    document.getElementById("rejected").textContent=data.rejected??"Indisponível";
+    document.getElementById("totalHours").textContent=data.totalHours??"Indisponível";
+    document.getElementById("approvedMinutes").textContent=data.approvedMinutes==null?"Indisponível":data.approvedMinutes+" min";
+    document.getElementById("pendingMinutes").textContent=data.pendingMinutes==null?"Indisponível":data.pendingMinutes+" min";
+    document.getElementById("rejectedMinutes").textContent=data.rejectedMinutes==null?"Indisponível":data.rejectedMinutes+" min";
+    document.getElementById("totalMinutes").textContent=data.totalMinutes==null?"Indisponível":data.totalMinutes+" min";
+    const accountLabels={active:"Ativa",inactive:"Desativada",unknown:"Indisponível"};
+    const accountStatus=data.accountStatus||"unknown";
+    document.getElementById("accountStatus").textContent=accountLabels[accountStatus]||"Indisponível";
+    document.getElementById("accountDot").className="dot "+(accountStatus==="active"?"active":accountStatus==="inactive"?"inactive":"unknown");
+    document.getElementById("rank").textContent=data.rank?"#"+data.rank:"Indisponível";
+    document.getElementById("rankTotal").textContent=data.rank?"Posição original na planilha oficial":"Posição não disponível para esta conta";
+    results.style.display="block";status("Consulta concluída.");
+  }catch(error){results.style.display="none";status(error.message||"Falha na consulta.",true)}
+  finally{submitButton.disabled=false}
+}
+form.addEventListener("submit",e=>{e.preventDefault();const email=emailInput.value.trim().toLowerCase();if(email)lookup(email)});
+</script>
+</body>
+</html>
